@@ -1,14 +1,14 @@
 # Updraft-Web — instructions for Claude Code
 
-Promo website for the UPDRAFT Android game: landing page, privacy policy and support/FAQ, in English and Slovenian. A static site for GitHub Pages: plain HTML, CSS and JavaScript. No framework, no bundler, no npm, no build step, no tracking. **Edit the files in this folder directly; they are the source.** The generator scripts used for v1.0–v1.2 are not part of the repo and are not needed. `../Claude outputs/Updraft-Web_v1.2.zip` is an older copy: ignore it.
+Promo website for the UPDRAFT Android game: landing page, privacy policy, terms of use and support/FAQ, in English and Slovenian. A static site for GitHub Pages: plain HTML, CSS and JavaScript. No framework, no bundler, no npm, no build step, no tracking. **Edit the files in this folder directly; they are the source.** The generator scripts used for v1.0–v1.2 are not part of the repo and are not needed. `../Claude outputs/Updraft-Web_v1.2.zip` is an older copy: ignore it.
 
 Everything in this folder is published (GitHub Pages serves every file, this one included). Keep secrets, private notes, test scripts and `node_modules` out of it; put tooling outside the repo, e.g. `../web-tools/`.
 
 ## Repository and deployment
 
-- Own git repo: `github.com/deniskorinsek/Updraft-Web` (public, because free GitHub Pages needs a public repo), branch `main`. The "no git" rule in `../CLAUDE.md` applies to the Android project only.
-- GitHub Pages: deploy from branch `main`, folder `/ (root)` → **https://deniskorinsek.github.io/Updraft-Web/**. Every push to `main` republishes within about a minute.
-- Pages status: `~/bin/gh api repos/deniskorinsek/Updraft-Web/pages --jq '.status, .html_url'` (expect `built`). If Pages is not enabled: `~/bin/gh api --method POST repos/deniskorinsek/Updraft-Web/pages -f "source[branch]=main" -f "source[path]=/"`.
+- Own git repo: `github.com/deniskorinsek/updraft` (public, because free GitHub Pages needs a public repo), branch `main`. The "no git" rule in `../CLAUDE.md` applies to the Android project only.
+- GitHub Pages: deploy from branch `main`, folder `/ (root)` → **https://deniskorinsek.github.io/updraft/**. Every push to `main` republishes within about a minute.
+- Pages status: `~/bin/gh api repos/deniskorinsek/updraft/pages --jq '.status, .html_url'` (expect `built`). If Pages is not enabled: `~/bin/gh api --method POST repos/deniskorinsek/updraft/pages -f "source[branch]=main" -f "source[path]=/"`.
 - Git and gh are authenticated machine-wide (macOS Keychain; `~/bin/gh` is logged in as deniskorinsek). Never ask for tokens. Never write tokens, keystores, service-account keys or `.env` files into the repo. Keep `.gitignore`.
 
 ## Files
@@ -16,10 +16,10 @@ Everything in this folder is published (GitHub Pages serves every file, this one
 | Path | Contents |
 |---|---|
 | `index.html` | landing page: inline icon sprite, nav with scroll-progress feather, `#hero` (playable feather), `#how` (+ wind trail), `#flyers`, `#worlds` (+ sticky `#journey`), `#winter` (pre-rendered village + sleigh + snow canvas), `#daily` (+ screen marquee), `#privacy` strip, `#download` (button, QR, store link), sticky CTA on phones, footer |
-| `privacy.html`, `support.html` | EN and SL as two blocks: `<div data-lang="en">` and `<div data-lang="sl" hidden>` |
-| `404.html` | not-found page; fixes the base path for the `/Updraft-Web/` project URL at runtime |
+| `privacy.html`, `terms.html`, `support.html` | EN and SL as two blocks: `<div data-lang="en">` and `<div data-lang="sl" hidden>`; SL heading ids end in `-sl` so each block's table of contents works |
+| `404.html` | not-found page; fixes the base path for the `/updraft/` project URL at runtime |
 | `css/site.css` | all styles, in this order: tokens (`:root`) → base → buttons → nav → hero → scroll reveal → sections → inner pages → motion layer → reduced motion (last block) |
-| `js/config.js` | Play Store URL, optional official badge image, support e-mail, default language |
+| `js/config.js` | Play Store URL, optional official badge image (keep it empty while the buttons say "coming soon"), support e-mail, default language |
 | `js/strings.js` | all landing-page copy: `window.UPDRAFT_STRINGS = { en: {…}, sl: {…} }` |
 | `js/biomes.js` | biome list for the Worlds section (from `../design/specs/biomes.json`) |
 | `js/site.js` | all behaviour, one IIFE (map below) |
@@ -32,17 +32,20 @@ Everything in this folder is published (GitHub Pages serves every file, this one
 
 - **Copy lives in three places**: the English fallback in the HTML (`data-i18n="key"` replaces innerHTML; `data-i18n-attr="aria-label:key;alt:key2"` sets attributes) and the `en` and `sl` entries in `js/strings.js`. Change all three. Both languages keep the same keys.
 - **Facts must match the game.** Sources: the GDD (`../documentation/UPDRAFT_Master_Game_Design_Physics_Art_Marketing_v7.md`, content v9: Part I and the §504 decisions) and the Android project. Claims on the site today:
-  - free to play;
-  - no banner ads, no interstitials; rewarded ads optional and capped;
-  - small cosmetic-only shop;
+  - free to play; not yet on Google Play ("Coming soon to Google Play" until the listing is live);
+  - no banner ads, no interstitials; rewarded ads optional (revive, double reward, Daily Bonus) and capped at 20 a day (`ads.rewardedDailyCap`); ad content limited to the G rating;
+  - in the EEA, the UK and Switzerland every ad request is tagged as under the age of digital consent, so ads are never personalised and no consent form is shown (`ads.underAgeOfConsentAll`, legal review L-07 option A);
+  - no analytics and no crash-reporting SDK; crashes only through Google Play Android vitals (DEC-140);
+  - no Google Play Games in V1: no leaderboards, achievements or cloud save on the site (legal review L-15);
+  - small cosmetic-only shop; the currency is **Stardust** (SL "zvezdni prah"), never "Wind Dust";
   - microphone analysed on the device, never recorded, stored or sent;
-  - Google Play Games leaderboards and achievements;
   - Winter Winds is seasonal;
+  - publisher: Denis Korinšek, private individual, Slovenia; support e-mail `korinsekdenis@gmail.com`;
   - minimum Android version = `minSdk` in `../updraft-android/gradle/libs.versions.toml` (29 = Android 10, DEC-19).
 
   When the game changes, update the site.
 - **Visuals** come from the design package (`../design/`). Colour and type tokens come from `design/tokens/design-tokens.json`. Replace assets from a newer package instead of editing them by hand. `design/` and `documentation/` are read-only for website work.
-- **Paths stay relative** (the site lives under `/Updraft-Web/`). Use absolute URLs only in the canonical and `og:` tags.
+- **Paths stay relative** (the site lives under `/updraft/`). Use absolute URLs only in the canonical and `og:` tags.
 - **Motion hooks**:
   - `data-px="k"` is parallax: the element moves at (1 − k)× the scroll speed (k > 0 is farther, k < 0 is closer).
   - `data-pxx` adds sideways drift; `data-pxmax` clamps the offset (px).
@@ -50,15 +53,15 @@ Everything in this folder is published (GitHub Pages serves every file, this one
   - Hero clouds use `data-climb` (the camera climb of the hero game), not `data-px`.
   - `h2.split` headings are split into word spans and rise when their `.rv` parent gets `.in`.
 - **Reduced motion**: every animation needs a still final state. Use the CSS block at the end of `site.css` and the `reduced` flag in `site.js`.
-- **App ID** `si.updraft` is provisional (DEC-01). If it changes, update:
+- **App ID** is `com.updraft` (owner decision 16 Nov 2026; it cannot change after the first Play upload). If the store URL ever changes, update:
   - `js/config.js → playUrl`;
-  - every `si.updraft` link in the HTML (`grep -n "si.updraft" *.html`);
-  - the QR code (regenerate it with the command in README).
+  - every Play link in the HTML (`grep -n "details?id=" *.html`);
+  - the QR code (regenerate it as described in README, outside the repo, and check that it decodes).
 
 ## Check after every change
 
 1. Preview: `python3 -m http.server 8000` → http://localhost:8000/ (the microphone demo needs localhost or HTTPS).
-2. Check widths 1440, 1280, 768 and 390, in EN and SL. The header toggle saves the language in localStorage `updraft-lang`, which wins over `#sl` in the URL and over the browser language. Also check `privacy.html`, `support.html` and `404.html`.
+2. Check widths 1440, 1280, 768 and 390, in EN and SL. The header toggle saves the language in localStorage `updraft-lang`, which wins over `#sl` in the URL and over the browser language. Also check `privacy.html`, `terms.html`, `support.html` and `404.html`.
 3. No console errors, no failed requests, no horizontal scroll (`scrollWidth === clientWidth`).
 4. With reduced motion on, the page is still and complete.
 5. Hero:
@@ -86,14 +89,15 @@ To re-measure: `cd ../web-tools && ./venv/bin/python scrollbench.py --label <nam
 
 ## Open work (handover, 14 Oct 2026)
 
-### Before launch (owner and legal)
-- `privacy.html`: fill `[Publisher legal name]` and `[street, postcode and city]` in both the EN and SL blocks (ask the owner). Get a legal review, and keep the page in line with the Play Data safety form.
-- The mailbox `support@updraft.si` must exist (or change `js/config.js → supportEmail`).
-- When the privacy page is live and final:
-  - set `PLACEHOLDER_PRIVACY_POLICY_URL` (now `null`) in `../updraft-android/app/src/main/kotlin/si/updraft/app/meta/ui/MetaInfoComponents.kt` to `https://deniskorinsek.github.io/Updraft-Web/privacy.html`;
-  - use the same URL in the Play Console;
-  - update `../LAUNCH_CHECKLIST.md`.
-- Until the Play listing exists, the Play links open an error page. Keep the site unannounced, or switch the button copy to "coming soon" (`hero.cta`, `cta.btn`, `nav.cta`, both languages).
-- Optional: the official Google Play badge and a custom domain (`CNAME`); see README.
+### Before launch (owner and legal) — updated 16 Nov 2026 after the legal review
+- Privacy policy, terms and footer legal notice were rewritten from the legal review (`privacy.html`, `terms.html`, every footer). Still open, marked in HTML comments (`grep -n "TODO" *.html`):
+  - `TODO owner`: postal address (L-16) in privacy, terms and every footer; the developer name shown on Google Play (L-02); the 24-month retention for support e-mails;
+  - `TODO lawyer`: the legal bases for ads under option A, the right-of-withdrawal sentence (L-11), and the whole `terms.html` draft (L-03).
+- Keep `privacy.html` in line with the Play Data safety form; when an SDK is added (analytics, crash reporting, Play Games), update the policy in the same release.
+- The privacy URL is already set in the app (`PRIVACY_POLICY_URL` in `MetaInfoComponents.kt`); the terms URL `https://deniskorinsek.github.io/updraft/terms.html` still has to go into the app's About → terms row and the Play Console (trader status, L-03) — Android work, not this repo.
+- "Coming soon" period: when the Play listing is live, switch the button copy back (keys listed in README, both languages and the HTML fallbacks).
+- The landing-page screenshots in `assets/screens/` predate GDD v9 (they show Wind Dust, XP, levels, missions, the daily chest and achievements). The Play Games leaderboard and the Daily Challenge rank screens were removed from the marquee; replace the rest with screenshots of the real app.
+- `404.html` has no footer (no legal notice or terms link); add one if needed, with paths fixed through `window.__base`.
+- Optional: the official Google Play badge (after launch) and a custom domain (`CNAME`); see README.
 
 Remove items here when they are done.
