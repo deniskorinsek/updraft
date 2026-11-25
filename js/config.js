@@ -11,7 +11,7 @@ window.UPDRAFT_SITE = {
   /* false while UPDRAFT is not public on Google Play (internal / closed testing): the buttons say "Coming soon" and a
      click shows a short "coming soon" note instead of opening Google's "item not found" page. Set it to true on launch
      day — every button then says "Get it on Google Play" and opens the store (also edit og:description in index.html). */
-  storeLive: false,
+  storeLive: true,
   /* Support mailbox shown on the support, privacy and terms pages and in the footer legal notice. */
   supportEmail: "korinsekdenis@gmail.com",
   /* Language shown when the visitor has no saved choice: "auto" follows the browser, or "en" / "sl". */
