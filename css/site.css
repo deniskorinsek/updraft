@@ -312,6 +312,22 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .how-note { margin-top: 28px; display: flex; gap: 12px; align-items: flex-start; color: var(--fg-2); font-size: 15px; max-width: 720px; }
 .how-note .icon { width: 22px; height: 22px; color: var(--gold-deep); margin-top: 2px; }
 @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+/* promo video (DEC-158): a vertical card next to its line; stacks on phones */
+.how-video { margin-top: 64px; display: grid; grid-template-columns: auto minmax(0, 440px); gap: 56px; align-items: center; justify-content: center; }
+.hv-card { position: relative; width: 300px; max-width: 100%; aspect-ratio: 9 / 16; border-radius: 28px; overflow: hidden; background: #1A1D52;
+  box-shadow: 0 30px 70px rgba(80, 50, 20, .3), 0 0 0 1px rgba(201, 150, 63, .35); }
+.hv-card video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hv-sound { position: absolute; right: 14px; bottom: 14px; display: inline-flex; gap: 8px; align-items: center; padding: 9px 14px; border-radius: var(--r-pill);
+  border: 1px solid rgba(255, 248, 238, .38); background: rgba(12, 15, 51, .62); color: var(--cream); font: 600 12px/1 var(--font-body); letter-spacing: .1em;
+  text-transform: uppercase; cursor: pointer; -webkit-backdrop-filter: none; }
+.hv-sound:hover, .hv-sound:focus-visible { border-color: var(--gold); }
+.hv-sound.on { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+.hv-sound .icon { width: 16px; height: 16px; }
+.hv-text { display: grid; gap: 14px; }
+.hv-text h3 { font-size: 38px; line-height: 1.1; text-wrap: balance; }
+.hv-text p { color: var(--fg-2); font-size: 17px; }
+@media (max-width: 900px) { .how-video { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 28px; margin-top: 44px; }
+  .hv-card { width: min(300px, 78vw); } .hv-text .eyebrow { justify-content: center; } }
 
 /* --------------------------------------------------------------------------
    flyers
@@ -459,7 +475,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .marquee-track { display: flex; gap: 22px; width: max-content; animation: marquee 70s linear infinite; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 .marquee .phone { height: 420px; }
-.marquee .phone::after { width: 56px; height: 16px; top: 16px; }
+.marquee .phone::after { width: 10px; height: 10px; top: 12px; border-radius: 50%; } /* a punch-hole camera: the real screens show their own top bar */
 .marquee .phone { border-radius: 30px; padding: 7px; }
 .marquee .phone-screen { border-radius: 24px; }
 .marquee figcaption { margin-top: 12px; text-align: center; font-size: 13px; color: var(--fg-3); letter-spacing: .04em; }
@@ -675,6 +691,24 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .cta-qr { animation: qr-float 6s ease-in-out infinite; }
 @keyframes qr-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 @media (max-width: 860px) { .cta-qr-wrap, .cta-flyer-wrap { display: none; } }
+
+/* --------------------------------------------------------------------------
+   Christmas season (25 Nov – 6 Jan: html.xmas, set in the head; ?christmas=1|0 previews)
+   -------------------------------------------------------------------------- */
+.xmas-ribbon, .winter-now, .marquee figure.xmas-only, .hero-snow { display: none; }
+.xmas .marquee figure.xmas-only { display: block; }
+.xmas .xmas-ribbon { display: inline-flex; align-items: center; gap: 10px; width: max-content; max-width: 100%; margin: 0;
+  padding: 8px 16px 8px 12px; border-radius: var(--r-pill); background: linear-gradient(90deg, rgba(156, 33, 41, .78), rgba(200, 50, 58, .62));
+  border: 1px solid rgba(242, 197, 107, .6); color: var(--gold-pale); font-size: 13.5px; font-weight: 500; letter-spacing: .02em;
+  box-shadow: 0 8px 26px rgba(120, 20, 30, .28), inset 0 1px 0 rgba(255, 241, 207, .25); }
+.xmas .xmas-ribbon .icon { width: 16px; height: 16px; color: var(--gold-light); flex: none; }
+.xmas .hero-snow { display: block; position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; pointer-events: none; }
+.xmas .winter-now { display: inline-flex; align-items: center; gap: 9px; width: max-content; margin-top: -6px; padding: 6px 12px;
+  border-radius: var(--r-pill); background: rgba(242, 197, 107, .14); border: 1px solid rgba(242, 197, 107, .42); color: var(--gold-light);
+  font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.xmas .winter-now i { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 0 rgba(242, 197, 107, .6); animation: now-pulse 2.4s ease-out infinite; }
+@keyframes now-pulse { 0% { box-shadow: 0 0 0 0 rgba(242, 197, 107, .55); } 70%, 100% { box-shadow: 0 0 0 9px rgba(242, 197, 107, 0); } }
+@media (prefers-reduced-motion: reduce) { .xmas .winter-now i { animation: none !important; } }
 
 /* --------------------------------------------------------------------------
    reduced motion

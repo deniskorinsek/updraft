@@ -865,20 +865,27 @@
 
   /* ----------------------------------------------------------- winter snow */
   var snow = $('#winter-snow');
-  if (snow && !reduced) initSnow(snow);
+  if (snow && !reduced) initSnow(snow, 90);
+  /* Christmas season (html.xmas): light snow over the hero; one still frame with reduced motion */
+  var heroSnow = $('#hero-snow');
+  if (heroSnow && document.documentElement.classList.contains('xmas')) initSnow(heroSnow, 70, reduced);
 
-  function initSnow(canvas) {
+  function initSnow(canvas, count, still) {
     var ctx = canvas.getContext('2d'), W = 0, H = 0, flakes = [], running = false, raf = 0, last = 0;
     function resize() {
       var r = canvas.getBoundingClientRect(), dpr = Math.min(1.5, window.devicePixelRatio || 1);
       if (W === r.width && H === r.height && flakes.length) return;   /* phones fire resize when the address bar moves: keep the snow */
       W = r.width; H = r.height; canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      flakes = []; for (var i = 0; i < 90; i++) flakes.push(make(true));
+      flakes = []; for (var i = 0; i < count; i++) flakes.push(make(true));
+      if (still) draw(0);
     }
     function make(any) { return { x: Math.random() * W, y: any ? Math.random() * H : -6, r: 0.8 + Math.random() * 2.2, v: 14 + Math.random() * 30, ph: Math.random() * 6.28, a: 0.45 + Math.random() * 0.5 }; }
     function frame(now) {
       if (!running) return; raf = requestAnimationFrame(frame);
       var dt = last ? Math.min(0.05, (now - last) / 1000) : 0.016; last = now;
+      draw(dt);
+    }
+    function draw(dt) {
       ctx.clearRect(0, 0, W, H); ctx.fillStyle = '#FFFFFF';
       for (var i = 0; i < flakes.length; i++) {
         var f = flakes[i]; f.y += f.v * dt; f.ph += dt * 0.9; f.x += Math.sin(f.ph) * 10 * dt + 4 * dt;
@@ -888,7 +895,27 @@
       ctx.globalAlpha = 1;
     }
     resize(); window.addEventListener('resize', resize);
+    if (still) return;
     whenVisible(canvas, function () { if (!running) { running = true; last = 0; raf = requestAnimationFrame(frame); } }, function () { running = false; cancelAnimationFrame(raf); });
+  }
+
+  /* ---------------------------------------------------------- promo video */
+  /* DEC-158: loads only when scrolled into view, plays muted while at least 40 % visible; the Christmas cut in
+     season; with reduced motion it never autoplays (native controls instead). The sound button unmutes. */
+  var hv = $('#how-video');
+  if (hv) {
+    var hvXmas = document.documentElement.classList.contains('xmas'), hvLoaded = false;
+    if (hvXmas) hv.poster = hv.getAttribute('data-xmas-poster');
+    var hvLoad = function () { if (!hvLoaded) { hvLoaded = true; hv.src = hv.getAttribute(hvXmas ? 'data-xmas-src' : 'data-src'); } };
+    var hvPlay = function () { hvLoad(); var p = hv.play(); if (p && p.catch) p.catch(function () {}); };
+    if (reduced || !('IntersectionObserver' in window)) { hv.controls = true; hvLoad(); }
+    else new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.intersectionRatio >= 0.4) hvPlay(); else if (!hv.paused) hv.pause(); }); }, { threshold: [0, 0.4, 0.8] }).observe(hv);
+    var hvBtn = $('.hv-sound');
+    var hvLabel = function () { var k = hv.muted ? 'how.video.sound' : 'how.video.mute', s = hvBtn.querySelector('span'); s.setAttribute('data-i18n', k); var v = t(k); if (v != null) s.innerHTML = v; };
+    if (hvBtn) hvBtn.addEventListener('click', function () {
+      hv.muted = !hv.muted; hvBtn.setAttribute('aria-pressed', String(!hv.muted)); hvBtn.classList.toggle('on', !hv.muted); hvLabel();
+      if (hv.paused) hvPlay();
+    });
   }
 
   scTick();                                                  /* first frame of the scroll-driven effects */

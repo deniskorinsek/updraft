@@ -15,7 +15,7 @@ Everything in this folder is published (GitHub Pages serves every file, this one
 
 | Path | Contents |
 |---|---|
-| `index.html` | landing page: inline icon sprite, nav with scroll-progress feather, `#hero` (playable feather), `#how` (+ wind trail), `#flyers`, `#worlds` (+ sticky `#journey`), `#winter` (pre-rendered village + sleigh + snow canvas), `#daily` (+ screen marquee), `#privacy` strip, `#download` (button, QR, store link), sticky CTA on phones, footer |
+| `index.html` | landing page: inline icon sprite, nav with scroll-progress feather, `#hero` (playable feather), `#how` (+ wind trail), `#flyers`, `#worlds` (+ sticky `#journey`), `#winter` = the Christmas season (pre-rendered village + sleigh + snow canvas), `#daily` (+ screen marquee), `#privacy` strip, `#download` (button, QR, store link), sticky CTA on phones, footer |
 | `privacy.html`, `terms.html`, `support.html` | EN and SL as two blocks: `<div data-lang="en">` and `<div data-lang="sl" hidden>`; SL heading ids end in `-sl` so each block's table of contents works |
 | `404.html` | not-found page; fixes the base path for the `/updraft/` project URL at runtime |
 | `css/site.css` | all styles, in this order: tokens (`:root`) → base → buttons → nav → hero → scroll reveal → sections → inner pages → motion layer → reduced motion (last block) |
@@ -23,10 +23,16 @@ Everything in this folder is published (GitHub Pages serves every file, this one
 | `js/strings.js` | all landing-page copy: `window.UPDRAFT_STRINGS = { en: {…}, sl: {…} }` |
 | `js/biomes.js` | biome list for the Worlds section (from `../design/specs/biomes.json`) |
 | `js/site.js` | all behaviour, one IIFE (map below) |
-| `assets/` | `brand/` (logo, icons, `og.jpg`, `qr-play.svg`), `flyers/` + `skins/`, `world/` (clouds, stars, `village_sleigh.svg`), `biomes/` (SVG reference, 1x WebP for the no-JS grid, `@2x.webp` for the journey phone, `village_scene@2x.webp`), `screens/` (app screenshots), `fonts/` (Cormorant Garamond + Jost, OFL), `icons.svg` |
+| `assets/` | `brand/` (logo, icons, `og.jpg`, `qr-play.svg`), `flyers/` + `skins/`, `world/` (clouds, stars, `village_sleigh.svg`), `biomes/` (SVG reference, 1x WebP for the no-JS grid, `@2x.webp` for the journey phone, `village_scene@2x.webp`), `screens/` (real app screens, 520 px WebP, from `../distribution/captures/` via `../web-tools/make_site_assets.py`), `fonts/` (Cormorant Garamond + Jost, OFL), `icons.svg` |
 | `README.md` | human docs: publishing, go-live checklist, editing copy |
 
 `site.js`, top to bottom: config wiring → scroll hub (`onMeasure`, `onFrame`, one rAF per scroll) → i18n (`t()`, `fmt()`, `applyLang()`; fires the `updraft:lang` event) → nav (solid on scroll, mobile menu) → nav progress feather → sticky CTA (phones) → reveal (`.rv` gets `.in`) and `whenVisible()` → hero engine `initHero()` (canvas wind particles, feather physics, skins, microphone, altitude and sky, toast) → motion layer (`splitWords`, `pxMeasure`/`pxUpdate`, `initTrail`, marquee) → flyer card tilt → `initJourney()` → `initSnow()` → first `scTick()`.
+
+## Christmas season (added 25 Nov 2026)
+
+- `html.xmas` is set by the inline script in `<head>` from the visitor's local date, 25 November – 6 January (same window as the game). `?christmas=1` / `?christmas=0` force it on or off for previews and checks.
+- In season: the hero shows the red ribbon (`xmas.ribbon`) and light snow (`#hero-snow`, the same `initSnow()` as the village; one still frame with reduced motion); `#winter` shows the "Now in the sky" chip (`winter.now`); the marquee shows the Christmas Home screen (`figure.xmas-only`). Out of season none of it renders (CSS `display: none`), and `#winter` still describes the yearly season.
+- The app icon on every page and in the manifest is "Sunset Glide" (DEC-155): `assets/brand/icon-512.png`, `icon-192.png`, `favicon-32.png`, `apple-touch-icon.png`; `og.jpg` is the store feature graphic. Regenerate them and the marquee screens with `../web-tools/make_site_assets.py` (Pillow; see its header) when the store art changes.
 
 ## Rules
 
@@ -39,7 +45,7 @@ Everything in this folder is published (GitHub Pages serves every file, this one
   - no Google Play Games in V1: no leaderboards, achievements or cloud save on the site (legal review L-15);
   - small cosmetic-only shop; the currency is **Stardust** (SL "zvezdni prah"), never "Wind Dust";
   - microphone analysed on the device, never recorded, stored or sent;
-  - Winter Winds is seasonal;
+  - the Christmas season (DEC-154): every year 25 November – 6 January (the game's `events.christmasSeason*`) — snow in every world, Santa's sleigh on Home, carols with sleigh bells in the menus, Kit's Santa hat, the Snowflake lent to every player; the Winter Winds event (event track, event leaderboard) is post-launch and not on the site;
   - publisher: Denis Korinšek, private individual, Slovenia; support e-mail `korinsekdenis@gmail.com`;
   - minimum Android version = `minSdk` in `../updraft-android/gradle/libs.versions.toml` (29 = Android 10, DEC-19).
 
@@ -93,10 +99,10 @@ To re-measure: `cd ../web-tools && ./venv/bin/python scrollbench.py --label <nam
 - Privacy policy, terms and footer legal notice were rewritten from the legal review (`privacy.html`, `terms.html`, every footer). Still open, marked in HTML comments (`grep -n "TODO" *.html`):
   - `TODO owner`: postal address (L-16) in privacy, terms and every footer; the developer name shown on Google Play (L-02); the 24-month retention for support e-mails;
   - `TODO lawyer`: the legal bases for ads under option A, the right-of-withdrawal sentence (L-11), and the whole `terms.html` draft (L-03).
-- Keep `privacy.html` in line with the Play Data safety form; when an SDK is added (analytics, crash reporting, Play Games), update the policy in the same release.
+- 25 Nov 2026: `#how` got the promo video (`.how-video`: a 9:16 card + line, `assets/video/`; loads only when scrolled into view, plays muted at ≥ 40 % visible, pauses when out of view, the Christmas cut when `html.xmas`, native controls and no autoplay with reduced motion; a "Sound on / off" button, strings `how.video.*` EN + SL) and fresher How copy (Star Gate, "Ride the light", star chains instead of wind rings / combos / Wind Energy; SL "Ne želiš pihati?"). Local `python3 -m http.server` doesn't serve byte ranges well — a reset on the first video request there is harmless; GitHub Pages is fine.
+- Keep `privacy.html` in line with the Play Data safety form; when an SDK is added (analytics, crash reporting, Play Games), update the policy in the same release. 25 Nov 2026: added the Play in-app review card ("Ratings", EN + SL) and the share text's plain Google Play link; "Last updated 25 November 2026" (`js/strings.js` `page.privacy.meta`).
 - The privacy URL is already set in the app (`PRIVACY_POLICY_URL` in `MetaInfoComponents.kt`); the terms URL `https://deniskorinsek.github.io/updraft/terms.html` still has to go into the app's About → terms row and the Play Console (trader status, L-03) — Android work, not this repo.
 - "Coming soon" period: when the Play listing is live, switch the button copy back (keys listed in README, both languages and the HTML fallbacks).
-- The landing-page screenshots in `assets/screens/` predate GDD v9 (they show Wind Dust, XP, levels, missions, the daily chest and achievements). The Play Games leaderboard and the Daily Challenge rank screens were removed from the marquee; replace the rest with screenshots of the real app.
 - `404.html` has no footer (no legal notice or terms link); add one if needed, with paths fixed through `window.__base`.
 - Optional: the official Google Play badge (after launch) and a custom domain (`CNAME`); see README.
 

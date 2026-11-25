@@ -13,6 +13,7 @@ Static landing page for the UPDRAFT Android game, built for GitHub Pages (reposi
 - `js/biomes.js` — the biome list for the Worlds section (from `design/specs/biomes.json`)
 - `js/site.js` — behaviour: language switch, hero flight demo, parallax and scroll animations, scroll-progress feather in the nav, worlds ascent, snow, menu
 - `assets/` — logos, flyer sprites, biome art, store screenshots, app screens, fonts (OFL), QR code
+- `assets/video/` — the promo video (720 × 1280, ≈ 4 MB each) and posters: `updraft-promo.mp4` all year, `updraft-promo-christmas.mp4` in the season (`html.xmas`). Made in the game repo (`scripts/make_promo_video.py`, then `PROMO_SIZE=720x1280 PROMO_BITRATE=1800000 scripts/promo/encode`); not from the design package
 
 ## Animation and parallax
 
