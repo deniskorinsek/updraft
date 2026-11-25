@@ -42,6 +42,19 @@
 
   /* ---------------------------------------------------------------- config */
   if (cfg.playUrl) $$('a[data-play]').forEach(function (a) { a.href = cfg.playUrl; });
+  /* Before launch (storeLive false) the store page doesn't exist yet: a click shows a short note instead. */
+  if (!cfg.storeLive) {
+    var soon = document.createElement('div'), soonTimer = 0;
+    soon.className = 'soon-note'; soon.setAttribute('role', 'status'); soon.setAttribute('aria-live', 'polite');
+    document.body.appendChild(soon);
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[data-play]');
+      if (!a) return;
+      e.preventDefault();
+      soon.textContent = t('soon.note') || 'UPDRAFT is coming to Google Play very soon.';
+      soon.classList.add('is-on'); clearTimeout(soonTimer); soonTimer = setTimeout(function () { soon.classList.remove('is-on'); }, 3200);
+    });
+  }
   if (cfg.supportEmail) $$('[data-email]').forEach(function (a) { a.href = 'mailto:' + cfg.supportEmail; a.textContent = cfg.supportEmail; });
   $$('[data-play-text]').forEach(function (a) { a.textContent = (cfg.playUrl || a.href).replace(/^https?:\/\//, ''); });
   if (cfg.playBadge) {
@@ -67,6 +80,7 @@
   }
   function t(key) {
     var d = STR[lang] || {};
+    if (cfg.storeLive && (d[key + '.live'] != null || (STR.en && STR.en[key + '.live'] != null))) key += '.live';  /* launch copy */
     if (d[key] != null) return d[key];
     return STR.en && STR.en[key] != null ? STR.en[key] : null;
   }
