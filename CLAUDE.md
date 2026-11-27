@@ -38,14 +38,16 @@ Everything in this folder is published (GitHub Pages serves every file, this one
 
 - **Copy lives in three places**: the English fallback in the HTML (`data-i18n="key"` replaces innerHTML; `data-i18n-attr="aria-label:key;alt:key2"` sets attributes) and the `en` and `sl` entries in `js/strings.js`. Change all three. Both languages keep the same keys.
 - **Facts must match the game.** Sources: the GDD (`../documentation/UPDRAFT_Master_Game_Design_Physics_Art_Marketing_v7.md`, content v9: Part I and the §504 decisions) and the Android project. Claims on the site today:
-  - free to play; not yet on Google Play ("Coming soon to Google Play" until the listing is live);
-  - no banner ads, no interstitials; rewarded ads optional (revive, double reward, Daily Bonus) and capped at 20 a day (`ads.rewardedDailyCap`); ad content limited to the G rating;
+  - free to play; on Google Play (`storeLive: true` in `js/config.js`: the buttons say "Get it on Google Play" and open the listing — until production it opens only for testers);
+  - no banner ads, no interstitials; rewarded ads optional (revive, double reward, Daily Bonus, free Stardust, try a style, an extra reroll — DEC-160) and capped at 20 a day (`ads.rewardedDailyCap`); ad content limited to the G rating;
   - in the EEA, the UK and Switzerland every ad request is tagged as under the age of digital consent, so ads are never personalised and no consent form is shown (`ads.underAgeOfConsentAll`, legal review L-07 option A);
   - no analytics and no crash-reporting SDK; crashes only through Google Play Android vitals (DEC-140);
   - no Google Play Games in V1: no leaderboards, achievements or cloud save on the site (legal review L-15);
-  - small cosmetic-only shop; the currency is **Stardust** (SL "zvezdni prah"), never "Wind Dust";
+  - small, fair shop: cosmetics, two packs, and the Bubble / Snowflake for 0.99 € each (they also unlock by playing; DEC-161, DEC-171); the currency is **Stardust** (SL "zvezdni prah"), never "Wind Dust";
   - microphone analysed on the device, never recorded, stored or sent;
-  - the Christmas season (DEC-154): every year 25 November – 6 January (the game's `events.christmasSeason*`) — snow in every world, Santa's sleigh on Home, carols with sleigh bells in the menus, Kit's Santa hat, the Snowflake lent to every player; the Winter Winds event (event track, event leaderboard) is post-launch and not on the site;
+  - the Christmas season (DEC-154): every year 25 November – 6 January (the game's `events.christmasSeason*`) — snow in every world, Santa's sleigh on Home, carols with sleigh bells in the menus, Zefi's Santa hat (the hero is Zefi since DEC-165, never "Kit"), the Snowflake lent to every player as a **limited edition** — the free time is what's limited, it can be kept from the shop (DEC-171; never call the Snowflake itself limited); the Winter Winds event (event track, event leaderboard) is post-launch and not on the site;
+  - version 1.1 (DEC-168 … DEC-171): each world is climbed **stage by stage** (6 + 4 + 5 = fifteen stages, "2 · Forest"), Star Gates lead into each new sky, a stage star on the first visit; new elements higher up (dandelion seeds, kites, pulsars, moth swarms, aurora ribbons); `js/biomes.js` altitudes = the game's stage starts (`world.biomeStarts*`);
+  - the game in 10 languages (DEC-163);
   - publisher: Denis Korinšek, private individual, Slovenia; support e-mail `korinsekdenis@gmail.com`;
   - minimum Android version = `minSdk` in `../updraft-android/gradle/libs.versions.toml` (29 = Android 10, DEC-19).
 
@@ -102,7 +104,6 @@ To re-measure: `cd ../web-tools && ./venv/bin/python scrollbench.py --label <nam
 - 25 Nov 2026: `#how` got the promo video (`.how-video`: a 9:16 card + line, `assets/video/`; loads only when scrolled into view, plays muted at ≥ 40 % visible, pauses when out of view, the Christmas cut when `html.xmas`, native controls and no autoplay with reduced motion; a "Sound on / off" button, strings `how.video.*` EN + SL) and fresher How copy (Star Gate, "Ride the light", star chains instead of wind rings / combos / Wind Energy; SL "Ne želiš pihati?"). Local `python3 -m http.server` doesn't serve byte ranges well — a reset on the first video request there is harmless; GitHub Pages is fine.
 - Keep `privacy.html` in line with the Play Data safety form; when an SDK is added (analytics, crash reporting, Play Games), update the policy in the same release. 25 Nov 2026: added the Play in-app review card ("Ratings", EN + SL) and the share text's plain Google Play link; "Last updated 25 November 2026" (`js/strings.js` `page.privacy.meta`).
 - The privacy URL is already set in the app (`PRIVACY_POLICY_URL` in `MetaInfoComponents.kt`); the terms URL `https://deniskorinsek.github.io/updraft/terms.html` still has to go into the app's About → terms row and the Play Console (trader status, L-03) — Android work, not this repo.
-- "Coming soon" period: when the Play listing is live, switch the button copy back (keys listed in README, both languages and the HTML fallbacks).
 - `404.html` has no footer (no legal notice or terms link); add one if needed, with paths fixed through `window.__base`.
 - Optional: the official Google Play badge (after launch) and a custom domain (`CNAME`); see README.
 

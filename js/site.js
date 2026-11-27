@@ -571,7 +571,7 @@
       if (userFlight) {
         if (alt > peak) peak = alt;
         var bi = 0; for (var i = 0; i < FEATHER_BIOMES.length; i++) if (alt >= FEATHER_BIOMES[i].alt[0]) bi = i;
-        if (bi > biome) { biome = bi; showBanner(bname(FEATHER_BIOMES[bi])); }
+        if (bi > biome) { biome = bi; showBanner((bi + 1) + ' · ' + bname(FEATHER_BIOMES[bi])); }   /* the game's stage banner "2 · Forest" (DEC-168) */
         if (cam <= 0 && idleT > 1.6) endFlight();
       }
       var txt = fmt(alt); if (txt !== lastAltTxt) { altEl.textContent = txt; lastAltTxt = txt; }
@@ -805,12 +805,13 @@
     var K_KEY = { feather: 'worlds.k.feather', bubble: 'worlds.k.bubble', winter: 'worlds.k.winter' };
 
     function name(b) { return (lang === 'sl' && b.name_sl) ? b.name_sl : b.name; }
+    function stageName(i) { return (i + 1) + ' · ' + name(items[i]); }   /* every biome is a numbered stage, as in the game (DEC-168) */
     function altText(b) { var a = b.alt[0], z = b.alt[1]; return z > 50000 ? fmt(a) + ' m +' : fmt(a) + '–' + fmt(z) + ' m'; }
     function lum(hex) { var n = parseInt(hex.slice(1), 16); return (0.2126 * (n >> 16 & 255) + 0.7152 * (n >> 8 & 255) + 0.0722 * (n & 255)) / 255; }
 
     function buildList() {
       items = BIOMES.filter(function (b) { return b.world === world; });
-      list.innerHTML = items.map(function (b) { return '<li><span>' + name(b) + '</span><span class="alt num">' + altText(b) + '</span></li>'; }).join('');
+      list.innerHTML = items.map(function (b, i) { return '<li><span>' + stageName(i) + '</span><span class="alt num">' + altText(b) + '</span></li>'; }).join('');
       items.forEach(function (b) { var im = new Image(); im.src = 'assets/biomes/' + b.id + '@2x.webp'; });
       if (worldEl) worldEl.textContent = t(WORLD_KEY[world]);
       if (kEl) { var k = t(K_KEY[world]); if (k) kEl.innerHTML = k; }
@@ -822,15 +823,15 @@
       var b = items[i]; if (!b) return;
       var now = performance.now();
       if (now < fadeUntil) { if (!swapTimer) swapTimer = setTimeout(function () { swapTimer = 0; swapTo(idx); }, fadeUntil - now + 16); return; }
-      if (i === shown) { if (biomeEl) biomeEl.textContent = name(b); return; }
+      if (i === shown) { if (biomeEl) biomeEl.textContent = stageName(i); return; }
       var next = layers[1 - active], cur = layers[active], src = 'assets/biomes/' + b.id + '@2x.webp', id = ++swapId;
       var show = function () {                                   /* crossfade only once the image is decoded */
         if (id !== swapId) return;                               /* a newer biome has taken over */
         next.classList.add('is-on'); cur.classList.remove('is-on'); active = 1 - active;
         shown = i; fadeUntil = performance.now() + FADE;
-        if (biomeEl) biomeEl.textContent = name(b);
+        if (biomeEl) biomeEl.textContent = stageName(i);
       };
-      if (cur.getAttribute('src') === src) { shown = i; if (biomeEl) biomeEl.textContent = name(b); return; }
+      if (cur.getAttribute('src') === src) { shown = i; if (biomeEl) biomeEl.textContent = stageName(i); return; }
       if (next.getAttribute('src') !== src) { next.src = src; if (next.decode) next.decode().then(show, show); else show(); }
       else show();
     }
